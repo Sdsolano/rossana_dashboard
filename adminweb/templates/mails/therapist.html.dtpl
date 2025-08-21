@@ -1,0 +1,15 @@
+Hola terapeuta {{ firstname }}
+
+Tienes una nueva terapia reservada.
+
+Código: {{ meet.code }}
+Dia y horario: {{ meet.date_therapist_ampm }}
+Duración: {{ meet.duration }} minutos
+
+En el siguiente enlace tendrás acceso a la sala de zoom el día y horario programado.
+{{ zoom_link }}
+
+Si por algún motivo debes cancelar la terapia, por favor haz click aquí y avisa al equipo de soporte {{ config.support }}  {{ cancel_link }}
+
+Saludos,
+{{ signature }}

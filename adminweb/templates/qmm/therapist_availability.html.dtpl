@@ -1,0 +1,100 @@
+{% extends "qmm/includes.html.dtpl" %}
+{% load static %}
+
+
+{% block content %}
+{% include "qmm/navbar_intranet.html.dtpl" %}
+
+<div class="wrapper">
+ <div class="section section-about-us text-center">
+  <div class="row">
+    
+    <div class="container">
+      <div class="row">
+      <h2 class="title">Disponibilidad horaria</h2></br>
+      
+      </div>
+      <div class="row">
+        {% for d in days %}
+            <div class="col col-3-md">
+              <div class="card">
+                <div class="card-body">
+                  <button class="btn btn-primary btn-round btn-sm btn-block" style="background-color:#eddeff; color:#6e2fbf;">{{ d.name }}</button>
+
+                  <table class="table table-sm">
+                    <tbody>
+                      {% for h in d.schedule %}
+                      <tr>
+
+                        <td>{{ h }}</td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                  <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#editday{{ d.name }}">Editar</button>
+
+
+                </div>
+              </div>
+            </div>
+        {% endfor %}
+      </div>
+      
+    </div>
+ 
+</div>
+</div>
+{% include "qmm/footer.html.dtpl" %}
+
+{% for d in days %}
+<div class="modal" id="editday{{ d.name }}" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <form method="POST"> {% csrf_token %}
+      <div class="modal-header">
+        <h5 class="modal-title">{{ d.name }}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Elige los horarios disponibles del dia</p>
+        {% for h in d.labels %}
+          <div class="form-check">
+          <label class="form-check-label">
+          <input class="form-check-input" type="checkbox" name="{{ h }}{{ d.name }}" {% if h in d.schedule %}checked {% endif %}>
+          <span class="form-check-sign"></span>
+          {{ h }}
+          </label>
+          </div>
+        {% endfor %}
+      </div>
+      <div class="modal-footer">
+        <input type="submit" class="btn btn-primary btn-round" name="{{ d.name }}" value="Guardar">
+        <button type="button" class="btn btn-outline-primary btn-round" data-dismiss="modal">Cerrar</button>
+      </div>
+    </form>
+    </div>
+  </div>
+</div>
+{% endfor %}
+
+
+{% endblock content %}
+
+{% block script %}
+<script>
+
+function test(){
+    const date = new Date();
+    const [month, day, year]       = [date.getMonth(), date.getDate(), date.getFullYear()];
+    const [hour, minutes, seconds] = [date.getHours(), date.getMinutes(), date.getSeconds()];
+    document.getElementById("horaactual").innerHTML = "(+"+(date.getTimezoneOffset()/60)+":00) "+hour+":"+minutes;
+}
+
+setInterval(function(){
+          test();
+    }, 500);
+
+</script>
+{% endblock %}.

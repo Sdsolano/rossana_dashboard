@@ -1,0 +1,14 @@
+Hola terapeuta {{ firstname }}
+
+Te recordamos que en una hora tienes una terapia programada
+Día y horario:  {{ meet.date_therapist_ampm }}
+Duración: {{ meet.duration }} minutos
+
+Enlace de zoom:
+{{ zoom_link }}
+
+Si por algún motivo debes cancelar la terapia, por favor haz click aquí y avisa al equipo de soporte {{ config.support }}  {{ cancel_link }}
+
+Saludos, 
+Escuela QMM
+

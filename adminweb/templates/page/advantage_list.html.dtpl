@@ -1,0 +1,83 @@
+{% extends "manager/base.html" %}
+{% block content %}
+
+<div class="row">
+    <div class="col-sm-12 col-md-12 col-xl-12">
+        <div class="card">
+              <div class="card-header">
+
+                <div class="card-tools">
+                  {% comment %}
+                  <div class="input-group input-group-sm">
+                    <input type="text" name="table_search" class="form-control float-right" placeholder="Buscar...">
+
+                    <div class="input-group-append">
+                      <button type="submit" class="btn btn-default">
+                        <i class="fas fa-search"></i>
+                      </button>
+                      <a href="{% url 'manager-sheet-add' %}" class="btn btn-default bg-lime">
+                        <i class="fas fa-plus-circle"></i> Agregar
+                    </a>
+                    </div>
+
+                  </div>
+                  {% endcomment %}
+                  
+                </div>
+              </div>
+              <!-- /.card-header -->
+              {% if advantages %}
+                <div class="card-body table-responsive p-0">
+                    <table class="table table-hover text-nowrap table-striped table-sm">
+                      <thead style="position: sticky;top: 0">
+                        <tr>
+                          <th width=100px>#</th>
+                          <th>Icono</th>
+                          <th>Titulo</th>
+                          <th>Descripción</th>
+                          
+                          <th width=50px>Acción</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for a in advantages %}
+                        <tr>
+                          <th>{{ a.order }}</th>
+                          <td><i class="{{ a.icon }}"></i></td> 
+                          <td>{{ a.title }}</td>
+                          <td>{{ a.description }}</td>
+
+                          <td>
+                            <a href={% url 'landing-adv-edit' a.id %}><i class="fas fa-edit"></i></a>
+                          </td>
+                        </tr>
+
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="card-body">
+                    <h5>No se encontraron resultados.</h5>
+                </div>
+            {% endif %}
+
+
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+          </div>
+    </div>
+</div>
+
+
+{% endblock %}
+{% block scripts %}
+<script>
+function realy_delete(url)
+{
+    if(confirm("¿Querés borrar el paso?"))
+        window.location.href = url;
+}
+</script>
+{% endblock %}.

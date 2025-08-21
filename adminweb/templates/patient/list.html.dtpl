@@ -1,0 +1,102 @@
+{% extends "manager/base.html" %}
+{% block content %}
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+              <div class="card-header">
+
+                <div class="card-tools">
+                  {% comment %}
+                  <div class="input-group input-group-sm">
+                    <input type="text" name="table_search" class="form-control float-right" placeholder="Buscar...">
+
+                    <div class="input-group-append">
+                      <button type="submit" class="btn btn-default">
+                        <i class="fas fa-search"></i>
+                      </button>
+                      <a href="{% url 'manager-sheet-add' %}" class="btn btn-default bg-lime">
+                        <i class="fas fa-plus-circle"></i> Agregar
+                    </a>
+                    </div>
+
+                  </div>
+                  {% endcomment %}
+                  <a href="{% url 'patient-add' %}" class="btn btn-default bg-lime">
+                    <i class="fas fa-plus-circle"></i> Agregar
+                  </a>
+                </div>
+              </div>
+              <!-- /.card-header -->
+              {% if patients %}
+                <div class="card-body table-responsive p-0">
+                    <table class="table table-hover text-nowrap table-striped table-sm">
+                      <thead>
+                        <tr>
+                          <th width=100px>#</th>
+                          <th>Apodo</th>
+                          <th>Nombre</th>
+                          <th>Apellido</th>
+                          <th>Email</th>
+                          <th>Teléfono</th>
+                          <th>Turnos Confirmados</th>
+                          <th>Turnos Cancelados</th>
+                          <th>Ausentes</th>
+                          <th width=50px>Estado</th>
+                          <th width=50px></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for p in patients %}
+                        <tr>
+                          <td><a href={% url 'patient-edit' p.id %}>{{ p.id }}</a></td>
+                          <td>{{ p.user.username }}</td>
+                          <td>{{ p.user.first_name }}</td>
+                          <td>{{ p.user.last_name }}</td>
+                          <td>{{ p.user.email }}</td>
+                          <td>{{ p.telephone }}</td>
+                          <td>{{ p.meets_confirmed | length }}</td>
+                          <td>{{ p.meets_canceled | length }}</td>
+                          <td>{{ p.meets_absent | length }}</td>
+                          <td>
+                              {% if p.user.is_active %}
+                                  <a href={% url 'patient-deactive' p.id %} data-toggle="tooltip" title="Desactivar" ><span class="badge bg-success">Activo</span></a>
+                              {% else %}
+                                  <a href={% url 'patient-active' p.id %} data-toggle="tooltip" title="Activar"><span class="badge bg-danger">Inactivo</span></a>
+                              {% endif %}
+                          </td>
+                          <td>
+                            <a href=# onclick="realy_delete('{% url 'patient-delete' p.id %}')"><i class="fas fa-trash"></i></a>
+                            <a href={% url 'patient-edit' p.id %}><i class="fas fa-edit"></i></a>
+                          </td>
+                        </tr>
+
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="card-body">
+                    <h5>No se encontraron pacientes registrados en el sistema.</h5>
+                </div>
+            {% endif %}
+
+
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+          </div>
+    </div>
+</div>
+
+
+{% endblock %}
+{% block scripts %}
+<script>
+function realy_delete(url)
+{
+    if(confirm("¿Queres borrar al paciente?"))
+        window.location.href = url;
+}
+</script>
+{% endblock %}.

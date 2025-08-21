@@ -1,0 +1,73 @@
+{% load static %}
+
+<!-- Main Sidebar Container -->
+  <aside class="main-sidebar sidebar-purple elevation-4">
+    <!-- Brand Logo -->
+    <a href="{% url 'qmm-landing' %}"target="_black" class="brand-link">
+      <img src="{{ sidebar.logo.url }}" alt="logo" class="brand-image elevation-3"
+           style="opacity: .8; ">
+      <span class="brand-text font-weight-light">{{ sidebar.title }}</span>
+    </a>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <!-- Sidebar user panel (optional) -->
+      <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+        <div class="image">
+          <img src="{% static "manager/dist/img/default-avatar.png" %}" class="img-circle elevation-2" alt="User Image">
+        </div>
+        <div class="info">
+          <a href="#" class="d-block">{{ request.user.first_name }} {{ request.user.last_name }}</a>
+        </div>
+      </div>
+
+      <!-- Sidebar Menu -->
+      <nav class="mt-2">
+        <ul class="nav nav-pills nav-sidebar flex-column nav-flat" data-widget="treeview" role="menu" data-accordion="false">
+          <!-- Add icons to the links using the .nav-icon class
+               with font-awesome or any other icon font library -->
+          <!-- li class="nav-header">MISCELLANEOUS</li -->
+          {% for key, item in nav_sidebar.items %}
+          {% if item.header %}
+          <li class="nav-header">{{ item.name }}</li>
+          {% else %}
+          {% if not item.hide %}
+          {% if item.childs %}
+          <li class="nav-item has-treeview">
+          {% else %}
+          <li class="nav-item">
+          {% endif %}
+            <a href="{{ item.href }}" class="nav-link {{ item.active }}">
+              <i class="nav-icon {{ item.icon }}"></i>
+              <p>
+                {{ item.name }}
+                {% if item.childs %}
+                <i class="right fas fa-angle-left"></i>
+                {% endif %}
+
+              </p>
+            </a>
+            {% if item.childs %}
+            <ul class="nav nav-treeview">
+            {% for key, item_c in item.childs.items %}
+            <li class="nav-item">
+                <a href="{{ item_c.href }}" class="nav-link {{ item_c.active }}">
+                  <i class="nav-icon {{ item_c.icon }}"></i>
+                  <p class="text-sm">
+                    {{ item_c.name }}
+                  </p>
+                </a>
+            </li>
+            {% endfor %}
+            </ul>
+            {% endif %}
+          </li>
+          {% endif %}
+          {% endif %}
+          {% endfor %}
+
+      </nav>
+      <!-- /.sidebar-menu -->
+    </div>
+    <!-- /.sidebar -->
+  </aside>

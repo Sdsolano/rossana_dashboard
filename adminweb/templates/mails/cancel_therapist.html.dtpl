@@ -1,0 +1,12 @@
+Hola {{ firstname }}
+
+Cita cancelada,
+
+Código: {{ meet.code }}
+Dia y horario: {{ meet.date_therapist_ampm }}
+Duración: {{ meet.duration }} minutos
+
+Seguimos en contacto,
+Saludos
+
+{{ signature }}

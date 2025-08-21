@@ -1,0 +1,14 @@
+Hola {{ firstname }}
+ 
+Te recordamos que en una hora tienes una terapia programada con el Quantum Team.
+Día y horario:  {{ meet.date_patient_ampm }} 
+Duración: {{ meet.duration }} minutos
+
+Enlace de Zoom:
+{{ zoom_link }}
+
+Si necesitas cancelar tu cita puedes hacer click aquí:  {{ cancel_link }}
+Si deseas reprogrmar tu cita puedes hacer click aquí: {{ redate_link }}
+
+Saludos, 
+{{ signature }}

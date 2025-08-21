@@ -1,0 +1,165 @@
+{% extends "manager/base.html" %}
+{% block content %}
+{% load tz %}
+
+<div class="row">
+    <div class="col-sm-12 col-md-12 col-xl-12">
+        <div class="card">
+              <div class="card-header">
+
+                <div class="card-tool">
+
+                  <div class="col-sm-4 col-md-4 col-xl-4">
+                  <form id="formFilter">{% csrf_token %}
+                    <div class="input-group input-group-sm">
+                    
+                      <!-- label for="birthday">Birthday:</label>
+                      <input type="date" class="form-control float-right" id="birthday" name="birthday" -->
+
+                      {{ selected_filter }}
+                      
+                      <select onchange="select_filter()" class="custom-select form-control-border" name="filter" id="selectfilter">
+                        <option value="today" {% if request.GET.filter == "today" %} selected {% endif %}>Hoy</option>
+                        <option value="yesterday" {% if request.GET.filter == "yesterday" %} selected {% endif %}>Ayer</option>
+                        <option value="last7days" {% if request.GET.filter == "last7days" %} selected {% endif %}>Ultimos 7 días</option>
+                        <option value="lastmonth" {% if request.GET.filter == "lastmonth" %} selected {% endif %}>Ultimo mes</option>
+                        <option value="all" {% if request.GET.filter == "all" %} selected {% endif %}>Todos</option>
+                      </select>
+                      
+                      <div class="input-group-append">
+                        <button type="submit" class="btn btn-default">
+                          <i class="fas fa-search"></i>
+                        </button>
+                      </div>
+                      <!-- div class="input-group-append">
+                        
+                        <a href="{% url 'meet-add' %}" class="btn btn-default bg-lime">
+                          <i class="fas fa-plus-circle"></i> Agregar
+                        </a>
+                      </div>
+                    </div -->
+                    
+                    
+                    <!-- div class="input-group input-group-sm">
+                      <input type="text" name="table_search" class="form-control float-right" placeholder="Buscar...">
+
+                      <div class="input-group-append">
+                        <button type="submit" class="btn btn-default">
+                          <i class="fas fa-search"></i>
+                        </button>
+                        
+                      </div>
+
+                    </div-->
+                  </form>
+                  </div>
+                  <div class="col-sm-4 col-md-4 col-xl-4">
+                  
+                  </div>
+              </div>
+             
+            </div>
+              <!-- /.card-header -->
+              {% if meets %}
+                <div class="card-body table-responsive p-0">
+                    <table class="table table-hover text-nowrap table-striped table-sm">
+                      <thead style="position: sticky;top: 0">
+                        <tr>
+                          <th width=100px>#</th>
+                          <th width=50px><a href="{% url 'meet-list' %}?order=status&filter={{ request.GET.filter }}" >Estado</a></th>
+                          <th width=100px>Creado</th>
+                          <th>Paciente</th>
+                          <th>Email Paciente</th>
+                          <th>Terapeuta</th>
+                          <th>Fecha de cita</th>
+                          <th>Zoom ID</th>
+                          <th>Zoom URL</th>
+                          
+                          <th width=50px>Acción</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for m in meets %}
+                        <tr>
+                          <td>{{ m.code }}</a></td>
+                          <td>
+                              {% if m.status == "D" %}
+                              <span class="badge bg-success">
+                              {% elif m.status == "U" %}
+                              <span class="badge bg-danger">
+                              {% elif m.status == "C" %}
+                              <span class="badge bg-warning">
+                              {% else %}
+                              <span class="badge bg-info">
+                              {% endif %}
+                                  {{ m.get_status_display }}
+                              </span>
+                           </td>
+                          
+                          <td>{{ m.created | date:"d/m/Y H:i:s"}}
+                          <td>{{ m.patient.verbose_name }}</td>
+                          <td>{{ m.patient.user.email }}</td>
+                          <td>{{ m.therapist.verbose_name }}</td>
+                          <td>{{ m.date | date:"d/m/Y H:i "}}</td>
+                          <td>{{ m.zoom.zoom_id }}</td>
+                          <td><a href="{{ m.zoom.link }}">{{ m.zoom.link |truncatechars:30}}</a></td>
+                          
+                          
+                          <td>
+                            <a href="{% url 'meet-sendmail' m.id %}" data-toggle="tooltip" title="Reenviar email">
+                              <i class="far fa-envelope"></i>
+                            </a>
+                            {% if m.ct_email_patient_send == 0 %}
+                              <span class="badge bg-danger">
+                              {% else %}
+                              <span class="badge bg-success">
+                              {% endif %}
+
+                              {{ m.ct_email_patient_send }}</span>
+                            <a href=# onclick="realy_delete('{% url 'meet-delete' m.id %}')" data-toggle="tooltip" title="Borrar"><i class="fas fa-trash"></i></a>
+                          </td>
+                        </tr>
+
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="card-body">
+                    <h5>No se encontraron citas.</h5>
+                </div>
+            {% endif %}
+            <!-- /.card -->
+          </div>
+    </div>
+</div>
+
+
+{% endblock %}
+{% block scripts %}
+<script>
+function realy_delete(url)
+{
+    if(confirm("¿Querés borrar la cita?"))
+        window.location.href = url;
+}
+function select_filter()
+{
+  //alert("JOJO");
+  document.getElementById("formFilter").submit();
+  //$('.formFilter').submit()
+}
+
+
+$(function () {
+    //Initialize Select2 Elements
+    $('.select2').select2()
+
+    //Initialize Select2 Elements
+    $('.select2bs4').select2({
+      theme: 'bootstrap4'
+    })
+})
+
+</script>
+{% endblock %}.

@@ -1,0 +1,13 @@
+Hola {{ firstname }}
+
+Fue cancelada tu cita en la plataforma QMM,
+
+Código: {{ meet.code }}
+Día y horario: {{ meet.date_patient_ampm }}
+Duración: {{ meet.duration }} minutos
+
+Contactate con soporte para el reembolso: {{ config.support }}.
+
+Saludos
+
+{{ signature }}

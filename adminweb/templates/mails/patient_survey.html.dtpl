@@ -1,0 +1,6 @@
+Hola {{ firstname }},
+Queremos saber cómo fue tu experiencia en la terapia que tuviste con nuestro Quantum Team.
+Haz clic aquí para darnos tu retroalimentación: {{ survey_link }}
+Muchas gracias.
+
+{{ signature }}

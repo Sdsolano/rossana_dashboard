@@ -1,0 +1,91 @@
+{% load static %}
+<footer class="footer footer-default">
+      
+      <div class=" container ">
+        <div class="row">
+          <div class="col">
+            <div class="row">
+              <a href="{% url 'qmm-landing' %}"><img class="navbar-brand" src="{% static "qmm/assets/img/Logo.png" %}"></a>
+            </div>
+            <div class="row">
+              <div class="copyright" style="color: #FFF;" id="copyright">
+                &copy;
+                <script>
+                  document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
+                </script>, Quantum Mind Team. Todos los derechos reservados
+              </div>
+            </div>
+            <div class="row">
+            </div>
+            <div class="row">
+              <!-- nav>
+                <ul>
+                  <li>
+                    <a href="#">
+                      Inicio
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#">
+                      Como funciona
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#">
+                      Preguntas frecuentes
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#">
+                      Terapeutas
+                    </a>
+                  </li>
+                </ul>
+              </nav -->
+            </div>
+          </div>
+          <div class="col">
+            
+            
+            <!-- div class="row">
+                  <h5 class="title">¡Suscribite a las novedades!</h5>  
+                  <form class="form-inline"> {% csrf_token %}
+                  <div class="form-group mx-sm-3">
+                    <label for="email-suscribe" class="sr-only">Suscríbete</label>
+                    <input type="password" class="form-control" id="email-sub" placeholder="email">
+                  </div>
+                  <button type="submit" class="btn btn-primary btn-round">Suscríbete</button>
+                </form>
+            </div-->
+          </div>
+        </div>
+
+        <!-- div class="row">
+          <div class="col-2">
+          </div>
+          <div class="col">
+            <nav>
+              <ul>
+                <li>
+                  <a href="#">
+                    Terminos y condiciones
+                  </a>
+                </li>
+                <li>
+                  <a href="#">
+                    Politicas de privacidad
+                  </a>
+                </li>
+                <li>
+                  <a href="#">
+                    Configuración de cookies
+                  </a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+          <div class="col-2">
+          </div-->
+      </div>
+    </footer>
+  </div>

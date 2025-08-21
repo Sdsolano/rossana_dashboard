@@ -1,0 +1,193 @@
+{% extends "qmm/base.html.dtpl" %}
+{% load static %}
+
+
+{% block content %}
+
+  <a href="https://api.whatsapp.com/send?phone={{ config.support_wa }}" class="float" target="_blank">
+      <i class="fab fa-whatsapp my-float"></i>
+  </a>
+    
+  <div class="wrapper">
+    <div class="section section-alert">
+    <div class="alert alert-primary alert-centre text-center" role="alert">
+    {{ promo }} <a href="{% url 'qmm-neworder-meet' %}" class="alert-link"><u>Solicitar ahora</u></a>
+    </div>
+    </div>
+    </div>
+    <div class="section section-about-us">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-8 ml-auto mr-auto text-center">
+            <h2 class="card-title">{{ hero.title }}</h2>
+            <h5 class="description"> {{ hero.subtitle }}</h5>
+            <a href="{% url 'qmm-neworder-meet' %}" class="btn btn-primary btn-round btn-lg">Solicitar una terapia</a>
+            <br>
+            <br>
+             <!-- img src="{% static "qmm/assets/img/banners--04.png" %}" -->
+             <video width="640" height="360" poster="{% static "qmm/assets/img/banners--04.png" %}" muted autoplay controls>
+              <source src="{% static "qmm/assets/video/qmm_team.mp4" %}" type="video/mp4">
+              <p>El navegador no admite la etiqueta de video</p>
+             </video>
+            
+          </div>
+        </div>
+        <div class="separator separator-primary"></div>
+        
+      </div>
+    </div>
+    <section id="aboutus" class="section section-about-us">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-8 ml-auto mr-auto text-center">
+            <a class="btn btn-primary btn-round btn-sm" style="background-color:#eddeff; color:#6e2fbf;">¿Cómo hacerlo?</a>
+            <h2 class="card-title">{{ steps.title }}</h2>
+            <br>
+            
+          </div>
+        </div>
+
+        <div class="row">
+          {% for s in step_items %}
+            <div class="col">
+              <div class="card">
+                <div class="card-body">
+                  <button class="btn btn-primary btn-icon btn-round btn-sm" style="background-color:#eddeff; color:#6e2fbf;">{{ s.number }}</button>
+                  <h5 class="title">{{ s.title }}</h5>
+                  <a class="card-text">{{ s.description }}</a>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+        <div class="separator separator-primary"></div>
+      </div>
+    </section>
+
+    <div class="section section-about-us">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-8 ml-auto mr-auto text-center">
+            <img src="{% static "qmm/assets/img/banners--05.png" %}">
+            <h4 class="card-title">{{ ready.title }}</h4>
+            <a href="{% url 'qmm-neworder-meet' %}" class="btn btn-primary btn-round btn-lg">Solicitar una terapia</a>
+            <br>
+            <br>
+            
+            
+          </div>
+        </div>
+        <div class="separator separator-primary"></div>
+        
+      </div>
+    </div>
+    
+     <div class="section section-about-us">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-8 ml-auto mr-auto text-center">
+            <a class="btn btn-primary btn-round btn-sm" style="background-color:#eddeff; color:#6e2fbf;">Nuestras ventajas</a>
+            <h2 class="card-title">{{ advantages.title }}</h2>
+            <h5 class="description"> {{ advantages.subtitle }}</h5>
+            <br>
+          </div>
+        </div>
+
+        <div class="row">
+          {% for adv in ads_items %}
+            <div class="col">
+              <div class="card card">
+                <div class="card-body">
+                  <br>
+                  <h1 class="tittle text-primary" ><i class="{{ adv.icon }}"></i></h1>
+                  <h5 class="card-title">{{ adv.title }}</h5>
+                  <a class="card-text">{{ adv.description }}</a>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+        <div class="separator separator-primary"></div>
+      </div>
+    </div>
+
+
+    <section id="pricing" class="section section-about-us" style="background-color: #3e176e;">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-8 ml-auto mr-auto text-center" style="color: #fff;">
+            <h2 class="title">Solicita tu terapia ahora</h2>
+            
+            <br>
+            <br>
+          </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-8 ml-auto mr-auto text-center">
+              <div class="card card-pricing" style="width: 60%;">
+                <div class="card-header card-header-info text-center">
+
+                </div>
+                <div class="card-body text-left">
+                  <br><br>
+                  <a class="btn btn-primary btn-round btn-sm" style="background-color:#eddeff; color:#6e2fbf;">Precio por sesión</a>
+                  
+                  <h1 class="title">${{ price }}</h1>
+                  <button class="btn btn-icon btn-round btn-sm" style="background-color:#eddeff; color:#6e2fbf;"><i class="fa fa-calendar"></i></button>  Sesión individual de {{ duration }} minutos<br>
+                  <button class="btn btn-icon btn-round btn-sm" style="background-color:#eddeff; color:#6e2fbf;"><i class="fa fa-unlock-alt"></i></button>  Resolve bloqueos desde la primera sesión<br>
+                  <button class="btn btn-icon btn-round btn-sm" style="background-color:#eddeff; color:#6e2fbf;"><i class="fas fa-certificate"></i></i></button>  Terapeutas certificados<br>
+                  <button class="btn btn-icon btn-round btn-sm" style="background-color:#eddeff; color:#6e2fbf;"><i class="fas fa-video"></i></button>  Sesión 100% remota<br>
+                  <a href="{% url 'qmm-neworder-meet' %}" class="btn btn-primary btn-round btn-block btn-lg">Solicitar terapia</a>
+                </div>
+              </div>
+            </div>
+        </div>
+        <div class="separator separator-primary"></div>
+      </div>
+    </section>
+
+
+
+     <section id="faq" class="section section-faq">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-8 ml-auto mr-auto text-center">
+            <h2 class="title">{{ faq.title }}</h2>
+          </div>
+        </div>
+
+        <div class="row">
+
+          <div class="col-md-12 ml-auto mr-auto text-center">
+          <div id="accordion">
+            {% for f in faq_items %}
+            <div class="card text-left" style="border-width: 0px 0px 1px 0px;border-radius: 0px;margin-bottom: 0px;">
+              <div class="card-header" id="heading{{ f.id }}">
+                <h5 class="mb-0">
+                  <button class="btn btn-link" data-toggle="collapse" data-target="#collapse{{ f.id }}" aria-expanded="true" aria-controls="collapse{{ f.id }}">
+                    {{ f.question }}
+                  </button>
+                  
+                </h5>
+              </div>
+
+              <div id="collapse{{ f.id }}" class="collapse" aria-labelledby="heading{{ f.id }}" data-parent="#accordion">
+                <div class="card-body">
+                  {% autoescape off %}
+                  {{ f.answer }}
+                  {% endautoescape %}
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          </div>
+        </div>
+        <div class="separator separator-primary"></div>
+      </div>
+    </section>
+    
+    
+
+{% endblock content %}

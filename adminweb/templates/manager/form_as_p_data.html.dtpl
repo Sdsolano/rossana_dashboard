@@ -1,0 +1,25 @@
+{% extends "manager/base.html" %}
+{% load static %}
+
+{% block content %}
+<!-- Default box -->
+      <div class="card card-purple">
+          <div class="card-header">
+          <h3 class="card-title">{{ form_title }}</h3>
+          </div>
+          <form  enctype="multipart/form-data" method="post">
+                {% csrf_token %}
+                <div class="card-body pb-0">
+                    {{ form.as_p }}
+                </div>
+                <!-- /.card-body -->
+                <div class="card-footer">
+                    <input type="submit" name="submit" class="btn btn-success" value="{{ form_submit_label }}">
+                </div>
+              <!-- /.card-footer -->
+          </form>
+
+      </div>
+      <!-- /.card -->
+
+{% endblock %}

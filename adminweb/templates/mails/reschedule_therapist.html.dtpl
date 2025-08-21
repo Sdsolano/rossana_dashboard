@@ -1,0 +1,17 @@
+Hola terapeuta {{ firstname }}
+
+Tu cita de QMM fue reprogramada.
+
+Código: {{ meet.code }}
+Dia y horario: {{ meet.date_patient_ampm }}
+Duración: {{ meet.duration }} minutos
+
+En el siguiente link tendras acceso a la sala de zoom el dia y horario pactado.
+{{ zoom_link }}
+
+Podes cancelar la cita aqui {{ cancel_link }}
+
+Seguimos en contacto,
+Saludos
+
+{{ signature }}

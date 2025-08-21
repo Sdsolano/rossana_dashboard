@@ -1,0 +1,225 @@
+{% extends "qmm/base.html.dtpl" %}
+{% load static %}
+
+
+{% block content %}
+
+<div class="wrapper">
+ <div class="section section-about-us text-center">
+  <div class="row">
+    <div class="col-lg-8 text-left col-md-8 ml-auto mr-auto">
+    <div class="container">
+      {% if request.session.reschedule %}
+      <h2 class="title">Reprograma tu terapia Quantum Mind</h2>
+      <p class="description">Selecciona un nuevo dia y hora para tu terapia.</p>
+      {% else%}
+      <h2 class="title">Solicita tu terapia Quantum Mind</h2>
+      <p class="description">Selecciona dia y hora para tu terapia. Despues accede al link de pago seguro y completa tu pedido. Es asi de facil.</p>
+      {% endif %}
+      <div class="row">
+        <div class="col-lg-6 text-left col-md-8 ml-auto mr-auto" >
+          <h3>Paso 1</h3>
+          <h3 class="title">Elegí el día</h3>
+
+          {% for k, m in month.items %}
+            <button class="btn btn-outline-primary btn-round btn-sm btn-block" type="button"><i class="far fa-calendar"></i> {{ m.label }}</button>
+            {% for k, d in m.days.items %}
+              
+                  <a href="{{ d.href }}" class="btn {% if k == selected %}btn-primary{% else %}btn-outline-primary{% endif %} btn-round btn-lg btn-block">{{ d.label }}</a>  
+              
+            {% endfor %}      
+          {% endfor %}
+
+          
+        </div>
+         <div class="col-lg-6 text-left col-md-8 ml-auto mr-auto ">
+          <h3>Paso 2</h3>
+          <h3 class="title">Elegí la hora</h3>
+
+          <div class="row">
+            
+            <div class="col-4">
+              <button class="btn btn-outline-primary btn-round btn-sm btn-block" onclick="test()" type="button" id="horaactual"><i class="fas fa-globe"></i> Uso horario
+              </button>
+            </div>
+            <div class="col-8">
+              
+              <select onchange="select_tz()" id="select_tz" name="timezone" class="btn btn-sm btn_outline-primary form-control">
+                {% for u in list_tz %}
+
+                <option id="ha_op1" {% if  u == selected_tz %}selected{% endif %}>{{ u }}</option>
+                {% endfor %}
+              </select>
+            
+            </div>
+          </div>
+
+          {% for k, m in meets.items %}
+                
+                <a href="{{ m.href }}" class="btn btn-{% if k != selected_meet %}outline-{% endif %}primary btn-round btn-lg btn-block">{{ m.label }}</a>  
+          {% endfor %}
+
+          <!-- div class="form-group">
+          <div class="input-group">
+          <div class="input-group-prepend">
+            <div class="input-group-text"><i class="fas fa-globe"></i></div>
+          </div>
+          <select class="form-control" id="exampleFormControlSelect1">
+            <option>-3:00 (19:03)</option>
+            <option>-4:00 (18:03)</option>
+            <option>-5:00 (17:03)</option>
+          </select>
+          
+        </div>
+          
+        </div-->
+          <br>
+
+          <!-- div class="spinner-border" role="status">
+            <span class="sr-only">Esperando día...</span>
+          </div -->
+
+          <!-- img src="{% static "qmm/assets/img/loading_icon.gif" %}"-->
+
+        </div>
+      </div>
+    </div>
+    </div>
+    <div class="col-lg-4 text-center col-md-8 ml-auto mr-auto" style="background-color: #efefef;">
+    <div class="container">
+      <h2 class="title">Resumen de tu solicitud</h2>
+      
+      <div class="row">
+        <div class="col-lg-6 text-center col-md-8 ml-auto mr-auto">
+           <table class="table table-hover">
+                
+            <tbody>
+                <tr>
+                  <th>Duración</th>
+                  <td>{{ resume.duration }}</td>
+                </tr> 
+                <tr>
+                  <th>Vía</th>
+                  <td>Zoom meeting</td>
+                </tr> 
+                <tr>
+                  <th>Dia</th>
+                  <td>{{ resume.day }}</td>
+                </tr> 
+                <tr>
+                  <th>Horario (24H)</th>
+                  <td>{{ resume.time }}h</td>
+                </tr> 
+                <tr>
+                  <th>Valor</th>
+                  <td>{{ resume.value }}</td>
+                </tr> 
+                
+            </tbody>
+          </table>
+
+          {% if step3 %}
+            <div class="send-button">
+              <button type="button" class="btn btn-primary btn-round btn-block btn-lg" data-toggle="modal" data-target="#resume">
+                Confirmar
+              </button>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="modal" id="resume" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Revisa tus datos</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Si los datos son correctos, presiona continuar</p>
+        <table class="table table-hover">
+                
+            <tbody>
+                <tr>
+                  <th>Duración</th>
+                  <td>{{ resume.duration }}</td>
+                </tr> 
+                <tr>
+                  <th>Vía</th>
+                  <td>Zoom meeting</td>
+                </tr> 
+                <tr>
+                  <th>Dia</th>
+                  <td>{{ resume.day }}</td>
+                </tr> 
+                <tr>
+                  <th>Horario (24H)</th>
+                  <td>{{ resume.time }}h</td>
+                </tr> 
+                <tr>
+                  <th>Valor</th>
+                  <td>{{ resume.value }}</td>
+                </tr> 
+                
+            </tbody>
+          </table>
+      </div>
+      <div class="modal-footer">
+        <a href="{% url 'qmm-checkout' selected selected_meet %}" type="button" class="btn btn-primary btn-round">Continuar</a>
+        <button type="button" class="btn btn-outline-primary btn-round" data-dismiss="modal">Modificar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{% endblock content %}
+
+{% block script %}
+<script>
+
+//document.cookie = "django_timezone=" + timezone;
+
+updatetime();
+function updatetime(){
+    const date = new Date();
+    //document.cookie = "django_timezone=" + date.getTimezoneOffset();
+    const timezone = date.getTimezoneOffset()
+    const [month, day, year]       = [date.getMonth(), date.getDate(), date.getFullYear()];
+    const [hour, minutes, seconds] = [date.getHours(), date.getMinutes(), date.getSeconds()];
+    document.getElementById("ha_opp1").innerHTML = 'Uso horario <i class="fas fa-globe"></i>'+" (UTC"+(timezone/-60)+":00) "+Intl.DateTimeFormat().resolvedOptions().timeZone+" "+String(hour).padStart(2,'0')+":"+String(minutes).padStart(2,'0');
+}
+
+function select_tz(){
+    s = document.getElementById("select_tz").value;
+    
+    window.location.reload();
+    //document.getElementById("fmTimezone").submit();
+    //alert(s)
+    document.cookie = "selected_timezone=" + s;
+}
+
+setInterval(function(){
+          updatetime();
+    }, 500);
+
+</script>
+
+<script>
+    // Timezone settings
+    const date = new Date();
+    const local_timezone = Intl.DateTimeFormat().resolvedOptions().timeZone; // e.g. "America/New_York"
+    document.cookie = "local_timezone_offset=" + date.getTimezoneOffset()*(-1);
+    document.cookie = "local_timezone=" + local_timezone;
+    if(local_timezone != "{{ local_timezone }}")
+      window.location.reload();
+
+</script>
+{% endblock %}.

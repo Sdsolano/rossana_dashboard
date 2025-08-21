@@ -1,0 +1,83 @@
+{% extends "manager/base.html" %}
+{% block content %}
+
+<div class="row">
+    <div class="col-sm-12 col-md-12 col-xl-12">
+        <div class="card">
+              <div class="card-header">
+
+                <div class="card-tools">
+                  {% comment %}
+                  <div class="input-group input-group-sm">
+                    <input type="text" name="table_search" class="form-control float-right" placeholder="Buscar...">
+
+                    <div class="input-group-append">
+                      <button type="submit" class="btn btn-default">
+                        <i class="fas fa-search"></i>
+                      </button>
+                      <a href="{% url 'manager-sheet-add' %}" class="btn btn-default bg-lime">
+                        <i class="fas fa-plus-circle"></i> Agregar
+                    </a>
+                    </div>
+
+                  </div>
+                  {% endcomment %}
+                  <a href="{% url 'landing-faq-add' %}" class="btn btn-default bg-lime">
+                    <i class="fas fa-plus-circle"></i> Agregar
+                  </a>
+                </div>
+              </div>
+              <!-- /.card-header -->
+              {% if faq %}
+                <div class="card-body table-responsive p-0">
+                    <table class="table table-hover text-nowrap table-striped table-sm">
+                      <thead style="position: sticky;top: 0">
+                        <tr>
+                          <th width=100px>#</th>
+                          <th>Pregunta</th>
+                          <th>Respuesta</th>
+                          <th width=50px>Acción</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for f in faq %}
+                        <tr>
+                          
+                          <td>{{ f.id }}</td>
+                          <td>{{ f.question }}</td>
+                          <td>{{ f.answer }}</td>
+                          <td>
+                            <a href=# onclick="realy_delete('{% url 'landing-faq-delete' f.id %}')" data-toggle="tooltip" title="Borrar"><i class="fas fa-trash"></i></a>
+                            <a href={% url 'landing-faq-edit' f.id %}><i class="fas fa-edit"></i></a>
+                          </td>
+                        </tr>
+
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="card-body">
+                    <h5>No se encontraron preguntas.</h5>
+                </div>
+            {% endif %}
+
+
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+          </div>
+    </div>
+</div>
+
+
+{% endblock %}
+{% block scripts %}
+<script>
+function realy_delete(url)
+{
+    if(confirm("¿Querés borrar la pregunta?"))
+        window.location.href = url;
+}
+</script>
+{% endblock %}.

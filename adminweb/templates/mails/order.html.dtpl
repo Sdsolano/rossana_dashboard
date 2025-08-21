@@ -1,0 +1,19 @@
+Hola {{ firstname }}
+
+Gracias por realizar tu pedido.
+
+Pediste:
+{% for i in items %} *{{ i.product.verbose_name }} -- ${{ i.product.value | floatformat:2 }} 
+{% endfor %}
+
+Total: ${{ order.total | floatformat:2 }}
+
+Para recibir tu pedido debes debes realizar el pago en el siguiente link
+{{ link_pay }}
+
+Con esto tambien confirmamos tu email.
+
+Gracias nuevamente.
+Saludos
+
+{{ signature }}

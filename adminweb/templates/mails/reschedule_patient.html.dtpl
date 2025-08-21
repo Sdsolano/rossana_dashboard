@@ -1,0 +1,19 @@
+Hola {{ firstname }}
+
+Reprogramaste una terapia con el Quantum Team.
+
+Te compartimos los nuevos detalles de tu cita:
+
+Código: {{ meet.code }}
+Dia y horario: {{ meet.date_patient_ampm }} 
+Duración: {{ meet.duration }} minutos
+
+Debes ingresar al siguiente enlace de Zoom el día y horario programado.
+{{ zoom_link }}
+
+Si necesitas cancelar tu cita puedes hacer click aquí:  {{ cancel_link }}
+Si deseas reprogramar tu cita puedes hacer click aquí: {{ redate_link }}
+
+Saludos,
+
+{{ signature }}

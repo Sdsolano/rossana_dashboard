@@ -1,0 +1,10 @@
+{% extends "manager/base.html" %}
+
+
+{% block content %}
+{% include "manager/dashboard_content.html.dtpl" %}
+{% endblock %}
+
+{% block scripts %}
+
+{% endblock %}

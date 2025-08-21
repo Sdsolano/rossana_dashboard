@@ -1,0 +1,7 @@
+static/admin/
+static/qmm/assets/video
+media/
+credencialesdeprueba_paypal.md
+siteconfig/settings_qmm.py
+siteconfig/wsgi_qmm.py
+__pycache__/

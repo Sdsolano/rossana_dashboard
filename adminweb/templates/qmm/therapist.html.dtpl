@@ -1,0 +1,107 @@
+{% extends "qmm/includes.html.dtpl" %}
+{% load static %}
+
+
+{% block content %}
+{% include "qmm/navbar_intranet.html.dtpl" %}
+
+<div class="wrapper">
+ <div class="section section-about-us text-center">
+  <div class="row">
+    <div class="col-lg-8 text-left col-md-8 ml-auto mr-auto">
+    <div class="container">
+      <h2 class="title">¡Bienvenido {{ therapist.user.first_name }} !</h2>
+      <p class="dscription">Estas son tus próximas sesiones</p>
+      <div class="row">
+        <div class="col-lg-12 text-left col-md-8 ml-auto mr-auto" >
+          {% for d,mm in days.items %}
+
+            <button class="btn btn-outline-primary btn-round btn-sm" type="button"><i class="far fa-calendar"></i> {{ d }}</button>
+
+            {% if mm.lock %}
+            <a href="{% url 'qmm-therapist-unlock-day' mm.date %}" class="btn btn-primary btn-round btn-sm"  type="button"><i class="fas fa-lock"></i> Desbloquear</a>
+            {% else %}
+            <a href="{% url 'qmm-therapist-lock-day' mm.date %}" class="btn btn-outline-primary btn-round btn-sm" type="button"><i class="fas fa-unlock"></i> Bloquear</a>
+            
+            {% endif %}
+
+            {% if mm.meets %}
+              <table class="table">
+              <thead>
+              <tr>
+              <th>Horario</th>
+              <th>Paciente</th>
+              <th>Duracion</th>
+              <th>Zoom</th>
+              <th></th>
+              </tr>  
+              </thead>
+              <tbody>
+              {% for m in mm.meets %}
+                <tr>
+                <td>{{ m.number }} - {{ m.date_begin_th | date:"m/d/y H:i"}}</td>
+                <td>{{ m.patient.user.first_name }} {{ m.patient.user.last_name }}</td>
+                <td>{{ m.duration }}</td>
+                <td><a class="btn btn-success btn-sm" href="{{ m.zoom.link }}">Unite con ZOOM</td>
+                <td>
+                  <!-- button class="btn btn-outline-primary btn-round btn-sm" type="button"><i class="fas fa-ellipsis-v"></i></button -->
+                  <div class="dropdown">
+                    <a class="btn btn-outline-primary btn-sm" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="false" aria-expanded="false">
+                      <i class="fas fa-ellipsis-v"></i>
+                    </a>
+
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                      <a class="dropdown-item" href="#">Reprogramar</a>
+                      <a class="dropdown-item" href="{% url 'qmm-meet-cancel-th' m.id %}">Cancelar</a>
+                    </div>
+                  </div>
+
+                </td>
+                </tr>
+              {% endfor %}
+              </tbody>
+              </table>
+            {% else %}
+              <table class="table">
+              <thead>
+              <tr>
+              <th>No tienes terapias agendadas para este día.</th>
+              </tr>  
+              </thead>
+              <tbody>
+              </tbody>
+              </table>
+              
+            {% endif %}
+          {% endfor %}
+
+          
+        </div>
+       
+      </div>
+    </div>
+    </div>
+    <div class="col-lg-4 text-center col-md-8 ml-auto mr-auto">
+    
+  </div>
+</div>
+</div>
+{% include "qmm/footer.html.dtpl" %}
+{% endblock content %}
+
+{% block script %}
+<script>
+
+function test(){
+    const date = new Date();
+    const [month, day, year]       = [date.getMonth(), date.getDate(), date.getFullYear()];
+    const [hour, minutes, seconds] = [date.getHours(), date.getMinutes(), date.getSeconds()];
+    document.getElementById("horaactual").innerHTML = "(+"+(date.getTimezoneOffset()/60)+":00) "+hour+":"+minutes;
+}
+
+setInterval(function(){
+          test();
+    }, 500);
+
+</script>
+{% endblock %}.

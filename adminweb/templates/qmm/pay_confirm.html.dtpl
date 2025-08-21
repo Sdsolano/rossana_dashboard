@@ -1,0 +1,52 @@
+{% extends "qmm/base.html.dtpl" %}
+{% load static %}
+
+
+{% block content %}
+
+<div class="wrapper">
+ <div class="section section-about-us text-center">
+  <div class="row">
+    <div class="col-lg-8 text-left col-md-8 ml-auto mr-auto">
+    <div class="container">
+      <h2 class="title">Pago confirmado</h2>
+      <p class="description">En breve te llega un email con todo los datos y el link de zoom para la cita.</p>
+      <div class="row">
+        <div class="col-lg-4 text-left col-md-8 ml-auto mr-auto">
+
+           
+        </div>
+        <div class="col-lg-6 text-left col-md-8 ml-auto mr-auto">
+        </div>
+        
+      </div>
+      <a href="{% url 'qmm-landing' %}" class="btn btn-primary btn-round">Volver a inicio</a> 
+    </div>
+    </div>
+    <div class="col-lg-4 text-center col-md-8 ml-auto mr-auto" style="background-color: #efefef;">
+    <div class="container">
+      
+    </div>
+    </div>
+  </div>
+</div>
+</div>
+
+
+
+
+{% endblock content %}
+
+{% block script %}
+<script>
+
+function updatetime(){
+   
+}
+
+setInterval(function(){
+          updatetime();
+    }, 500);
+
+</script>
+{% endblock %}.

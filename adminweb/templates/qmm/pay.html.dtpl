@@ -1,0 +1,120 @@
+{% extends "qmm/base.html.dtpl" %}
+{% load static %}
+
+{% block head %}
+
+<script src="https://js.stripe.com/v3/"></script>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="wrapper">
+ <div class="section section-about-us text-center">
+  <div class="row">
+    <div class="col-lg-8 text-left col-md-8 ml-auto mr-auto">
+    <div class="container">
+      <h2 class="title">Pago</h2>
+      <p class="description">Para realizar el pago clickea en alguno de los metodos disponibles.</p>
+      <div class="row">
+        <div class="col-lg-4 text-left col-md-8 ml-auto mr-auto">
+
+           <!-- Include the PayPal JavaScript SDK; replace "test" with your own sandbox Business account app client ID -->
+                   <script src="https://www.paypal.com/sdk/js?client-id=AbDyUuy1Cev_SX_QVV_oIjIATJqZqRxfWMKV8LvHL8iOI-BrdSadN_BaXyhH7cUd0LazDaK0IUQFCl7I&currency=USD"></script>
+
+                   <!-- Set up a container element for the button -->
+                   <div id="paypal-button-container"></div>
+
+                   <script>
+                      paypal.Buttons({
+
+                        // Sets up the transaction when a payment button is clicked
+                        createOrder: function(data, actions) {
+                          return actions.order.create({
+                            purchase_units: [{
+                                items: [
+                                     {
+                                        "name": "Terapia",
+                                        "description": "Terapia", /* Item details will also be in the completed paypal.com transaction view */
+                                        "unit_amount": {
+                                          "currency_code": "USD",
+                                          "value": "{{ meet.value | floatformat:2 }}"
+                                        },
+                                        "quantity": "1"
+                                      },
+                                     
+                                ],
+                                amount: {
+                                    value: {{ meet.value | floatformat:2 }},
+                                    breakdown: {
+                                        "item_total": {  /* Required when including the `items` array */
+                                          "currency_code": "USD",
+                                          "value": "{{ meet.value | floatformat:2 }}"
+                                        }
+                                    }
+                                },
+                                description: "Terapia",
+
+                            }]
+                          });
+                        },
+
+                        // Finalize the transaction after payer approval
+                        onApprove: function(data, actions) {
+                          return actions.order.capture().then(function(orderData) {
+                            // Successful capture! For dev/demo purposes:
+                                console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
+                                var transaction = orderData.purchase_units[0].payments.captures[0];
+                                //alert('Transaction '+ transaction.status + ': ' + transaction.id + '\n\nSee console for all available details');
+
+                            // When ready to go live, remove the alert and show a success message within this page. For example:
+                            var element = document.getElementById('paypal-button-container');
+                            element.innerHTML = '';
+                            element.innerHTML = '<h3>Procesando pago...</h3>';
+                            
+                            window.location.replace('{% url 'qmm-pay-confirm' pay.id %}?idt='+transaction.id);
+                            
+                            
+                          });
+                        }
+                      }).render('#paypal-button-container');
+
+                    </script>
+                    </div>
+        </div>
+        <div class="col-lg-4  text-left col-md-8 ml-auto mr-auto">
+
+          <form action="{% url 'qmm-pay-checkout-stripe' pay.id %}" method="POST">  {% csrf_token %}
+            <button class="btn btn-primary btn-round btn-lg btn-block" type="submit" id="checkout-button">Stripe</button>
+          </form>
+        </div>
+         
+      </div>
+    </div>
+    </div>
+    <div class="col-lg-4 text-center col-md-8 ml-auto mr-auto" style="background-color: #efefef;">
+    <div class="container">
+      
+    </div>
+    </div>
+  </div>
+</div>
+</div>
+
+
+
+{% endblock content %}
+
+{% block script %}
+<script>
+
+function updatetime(){
+   
+}
+
+setInterval(function(){
+          updatetime();
+    }, 500);
+
+</script>
+{% endblock %}.
