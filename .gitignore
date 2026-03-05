@@ -1,0 +1,33 @@
+# --- Python / Django ---
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.sqlite3
+*.log
+
+# Entornos virtuales
+.venv/
+venv/
+env/
+.env
+.env.* 
+
+# Archivos de compilación / static
+staticfiles/
+media/
+
+# --- Node / Vite (frontend) ---
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# --- Conda ---
+.conda/
+
+# --- IDE / SO ---
+.vscode/
+.idea/
+*.code-workspace
+.DS_Store
+Thumbs.db
