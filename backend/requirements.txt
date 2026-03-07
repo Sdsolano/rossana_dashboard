@@ -1,0 +1,2 @@
+djangorestframework>=3.14
+django-cors-headers>=4.3
