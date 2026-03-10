@@ -12,6 +12,9 @@ from .views import (
     MeAPIView,
     MeAvailabilityAPIView,
     TherapistGenerateScheduleAPIView,
+    MeetListAPIView,
+    MeetDetailAPIView,
+    MeetBookAPIView,
 )
 
 urlpatterns = [
@@ -23,6 +26,9 @@ urlpatterns = [
     path("therapists/<int:pk>/availability/", TherapistAvailabilityAPIView.as_view()),
     path("therapists/<int:pk>/freedays/", TherapistFreedaysAPIView.as_view()),
     path("therapists/<int:pk>/generate-schedule/", TherapistGenerateScheduleAPIView.as_view()),
+    path("meets/", MeetListAPIView.as_view()),
+    path("meets/<int:pk>/", MeetDetailAPIView.as_view()),
+    path("meets/book/", MeetBookAPIView.as_view()),
     path("auth/login/", AuthLoginAPIView.as_view()),
     path("me/", MeAPIView.as_view()),
     path("me/availability/", MeAvailabilityAPIView.as_view()),

@@ -7,6 +7,7 @@ from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate
 from django.shortcuts import get_object_or_404
 from .models import Therapist, ScheduleConfig, Freeday, Meet
+from patient.models import Patient
 from .countries import get_countries_for_api
 from .serializers import (
     TherapistListSerializer,
@@ -14,6 +15,8 @@ from .serializers import (
     TherapistDetailSerializer,
     TherapistUpdateSerializer,
     TherapistPasswordSerializer,
+    MeetSerializer,
+    MeetUpdateSerializer,
 )
 
 
@@ -367,3 +370,96 @@ class TherapistGenerateScheduleAPIView(APIView):
         from django.utils import timezone
         therapist.make_schedule(timezone.now(), to_days, meet_duration)
         return Response({"detail": f"Agenda generada para {to_days} días."})
+
+
+class MeetListAPIView(APIView):
+    """Listado de citas (opcionalmente filtradas por terapeuta y fecha)."""
+
+    def get(self, request):
+        qs = Meet.objects.select_related("therapist", "patient__user").all().order_by("date", "number")
+        therapist_id = request.query_params.get("therapist")
+        date_str = request.query_params.get("date")
+        if therapist_id:
+            try:
+                qs = qs.filter(therapist_id=int(therapist_id))
+            except (TypeError, ValueError):
+                pass
+        if date_str:
+            try:
+                day = datetime.strptime(date_str, "%Y-%m-%d").date()
+                qs = qs.filter(date=day)
+            except ValueError:
+                pass
+        return Response(MeetSerializer(qs, many=True).data)
+
+
+class MeetDetailAPIView(APIView):
+    """Detalle y actualización sencilla de una cita."""
+
+    def get(self, request, pk):
+        meet = get_object_or_404(Meet.objects.select_related("therapist", "patient__user"), pk=pk)
+        return Response(MeetSerializer(meet).data)
+
+    def put(self, request, pk):
+        meet = get_object_or_404(Meet.objects.select_related("therapist", "patient__user"), pk=pk)
+        serializer = MeetUpdateSerializer(meet, data=request.data, partial=False)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.save()
+        return Response(MeetSerializer(meet).data)
+
+
+class MeetBookAPIView(APIView):
+    """Reserva una cita: asigna paciente y cambia estado en un slot libre."""
+
+    def post(self, request):
+        therapist_id = request.data.get("therapist_id")
+        patient_id = request.data.get("patient_id")
+        date_str = request.data.get("date")
+        number = request.data.get("number")
+
+        if not (therapist_id and patient_id and date_str is not None and number is not None):
+            return Response(
+                {"detail": "Indica therapist_id, patient_id, date (YYYY-MM-DD) y number."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        try:
+            therapist_id = int(therapist_id)
+            patient_id = int(patient_id)
+            number = int(number)
+        except (TypeError, ValueError):
+            return Response({"detail": "IDs y number deben ser enteros."}, status=status.HTTP_400_BAD_REQUEST)
+
+        from datetime import datetime as dt
+
+        try:
+            day = dt.strptime(date_str, "%Y-%m-%d").date()
+        except ValueError:
+            return Response({"detail": "date debe ser YYYY-MM-DD."}, status=status.HTTP_400_BAD_REQUEST)
+
+        therapist = get_object_or_404(Therapist, pk=therapist_id)
+        patient = get_object_or_404(Patient.objects.select_related("user"), pk=patient_id)
+
+        meet = (
+            Meet.objects.select_for_update()
+            .filter(therapist=therapist, date=day, number=number, status="F")
+            .first()
+        )
+        if not meet:
+            return Response(
+                {"detail": "No hay un slot libre con esos datos."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        meet.patient = patient
+        meet.status = "D"
+        meet.save()
+        return Response(MeetSerializer(meet).data, status=status.HTTP_200_OK)
+
+    def patch(self, request, pk):
+        meet = get_object_or_404(Meet.objects.select_related("therapist", "patient__user"), pk=pk)
+        serializer = MeetUpdateSerializer(meet, data=request.data, partial=True)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.save()
+        return Response(MeetSerializer(meet).data)

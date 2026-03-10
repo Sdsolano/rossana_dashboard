@@ -5,6 +5,16 @@ import Therapists from "./pages/Therapists"
 import TherapistNew from "./pages/TherapistNew"
 import TherapistEdit from "./pages/TherapistEdit"
 import TherapistPassword from "./pages/TherapistPassword"
+import Patients from "./pages/Patients"
+import PatientNew from "./pages/PatientNew"
+import PatientEdit from "./pages/PatientEdit"
+import Meets from "./pages/Meets"
+import MeetEdit from "./pages/MeetEdit"
+import MeetBook from "./pages/MeetBook"
+import Pays from "./pages/Pays"
+import Pages from "./pages/Pages"
+import PageNew from "./pages/PageNew"
+import PageEdit from "./pages/PageEdit"
 import Login from "./pages/Login"
 import Panel from "./pages/Panel"
 import PanelAvailability from "./pages/PanelAvailability"
@@ -20,6 +30,18 @@ function Nav() {
         </Link>
         <Link to="/therapists" className="text-gray-600 hover:text-gray-900 font-medium">
           Terapeutas
+        </Link>
+        <Link to="/patients" className="text-gray-600 hover:text-gray-900 font-medium">
+          Pacientes
+        </Link>
+        <Link to="/meets" className="text-gray-600 hover:text-gray-900 font-medium">
+          Citas
+        </Link>
+        <Link to="/pays" className="text-gray-600 hover:text-gray-900 font-medium">
+          Pagos
+        </Link>
+        <Link to="/pages" className="text-gray-600 hover:text-gray-900 font-medium">
+          Contenido
         </Link>
         {isAuthenticated ? (
           <>
@@ -62,7 +84,7 @@ function App() {
                   Rossana Dashboard
                 </h1>
                 <p className="mt-2 text-gray-600">
-                  Migración legacy → Backend + Frontend. Módulo: Terapeutas.
+                  Migración legacy → Backend + Frontend. Módulos: Terapeutas, Pacientes, Citas, Pagos y CMS.
                 </p>
               </div>
             }
@@ -71,6 +93,17 @@ function App() {
           <Route path="/therapists/new" element={<TherapistNew />} />
           <Route path="/therapists/:id/edit" element={<TherapistEdit />} />
           <Route path="/therapists/:id/password" element={<TherapistPassword />} />
+          <Route path="/patients" element={<Patients />} />
+          <Route path="/patients/new" element={<PatientNew />} />
+          <Route path="/patients/:id/edit" element={<PatientEdit />} />
+          <Route path="/meets" element={<Meets />} />
+          <Route path="/meets/new" element={<MeetBook />} />
+          <Route path="/meets/book" element={<MeetBook />} />
+          <Route path="/meets/:id/edit" element={<MeetEdit />} />
+          <Route path="/pays" element={<Pays />} />
+          <Route path="/pages" element={<Pages />} />
+          <Route path="/pages/new" element={<PageNew />} />
+          <Route path="/pages/:id/edit" element={<PageEdit />} />
           <Route path="/login" element={<Login />} />
           <Route path="/panel" element={<Panel />} />
           <Route path="/panel/availability" element={<PanelAvailability />} />

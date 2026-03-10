@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User, Group
-from .models import Therapist, GridAvailability, ScheduleConfig
+from patient.models import Patient
+from .models import Therapist, GridAvailability, ScheduleConfig, Meet
 from .countries import timezone_verbose_to_minutes
 
 
@@ -218,6 +219,51 @@ class TherapistUpdateSerializer(serializers.Serializer):
         instance.rangear()
 
         return instance
+
+
+class MeetSerializer(serializers.ModelSerializer):
+    therapist_id = serializers.IntegerField(source="therapist.id", read_only=True)
+    patient_id = serializers.IntegerField(source="patient.id", read_only=True)
+    patient_name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Meet
+        fields = [
+            "id",
+            "therapist_id",
+            "patient_id",
+            "patient_name",
+            "date",
+            "number",
+            "status",
+        ]
+
+    def get_patient_name(self, obj):
+        if not obj.patient:
+            return ""
+        u = obj.patient.user
+        return f"{u.first_name} {u.last_name}".strip() or u.username
+
+
+class MeetUpdateSerializer(serializers.Serializer):
+    """Actualiza paciente y estado de una cita."""
+    patient_id = serializers.IntegerField(required=False, allow_null=True)
+    status = serializers.ChoiceField(choices=[c[0] for c in Meet.STATUS_CHOICES], required=False)
+
+    def update(self, instance, validated_data):
+        patient_id = validated_data.get("patient_id", None)
+        if "patient_id" in validated_data:
+            if patient_id is None:
+                instance.patient = None
+            else:
+                instance.patient = Patient.objects.filter(id=patient_id).first()
+        if "status" in validated_data:
+            instance.status = validated_data["status"]
+        instance.save()
+        return instance
+
+    def create(self, validated_data):
+        raise NotImplementedError
 
 
 class TherapistPasswordSerializer(serializers.Serializer):

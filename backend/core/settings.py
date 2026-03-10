@@ -41,6 +41,9 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "corsheaders",
     "therapist",
+    "patient",
+    "pay",
+    "page",
 ]
 
 MIDDLEWARE = [

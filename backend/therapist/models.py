@@ -160,7 +160,7 @@ class Therapist(models.Model):
 
 
 class Meet(models.Model):
-    """Cita/slot asignado (modelo mínimo para disponibilidad)."""
+    """Cita/slot asignado."""
     STATUS_CHOICES = [
         ("F", "Libre"),
         ("T", "Temporal"),
@@ -172,6 +172,8 @@ class Meet(models.Model):
         ("A", "Ausente"),
     ]
     therapist = models.ForeignKey(Therapist, on_delete=models.CASCADE)
+    # Paciente opcional asociado a la cita (None si el slot sigue libre)
+    patient = models.ForeignKey("patient.Patient", on_delete=models.SET_NULL, null=True, blank=True)
     date = models.DateField()
     number = models.IntegerField()  # índice de slot en el día
     status = models.CharField(max_length=1, choices=STATUS_CHOICES, default="F")
