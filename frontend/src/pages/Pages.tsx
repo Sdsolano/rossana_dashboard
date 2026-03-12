@@ -110,6 +110,16 @@ export default function Pages() {
                       >
                         Editar
                       </Link>
+                      {p.is_public && (
+                        <a
+                          href={`/public/${p.slug}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-green-600 hover:underline text-sm font-medium"
+                        >
+                          Ver pública
+                        </a>
+                      )}
                       <button
                         type="button"
                         onClick={() => handleDelete(p.id, p.slug)}

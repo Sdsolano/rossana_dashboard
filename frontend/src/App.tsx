@@ -15,6 +15,8 @@ import Pays from "./pages/Pays"
 import Pages from "./pages/Pages"
 import PageNew from "./pages/PageNew"
 import PageEdit from "./pages/PageEdit"
+import PublicPage from "./pages/PublicPage"
+import HealthLanding from "./pages/HealthLanding"
 import Login from "./pages/Login"
 import Panel from "./pages/Panel"
 import PanelAvailability from "./pages/PanelAvailability"
@@ -76,19 +78,7 @@ function App() {
         <Nav />
       <main>
         <Routes>
-          <Route
-            path="/"
-            element={
-              <div className="p-6 max-w-5xl mx-auto">
-                <h1 className="text-2xl font-semibold text-gray-800">
-                  Rossana Dashboard
-                </h1>
-                <p className="mt-2 text-gray-600">
-                  Migración legacy → Backend + Frontend. Módulos: Terapeutas, Pacientes, Citas, Pagos y CMS.
-                </p>
-              </div>
-            }
-          />
+          <Route path="/" element={<HealthLanding />} />
           <Route path="/therapists" element={<Therapists />} />
           <Route path="/therapists/new" element={<TherapistNew />} />
           <Route path="/therapists/:id/edit" element={<TherapistEdit />} />
@@ -107,6 +97,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/panel" element={<Panel />} />
           <Route path="/panel/availability" element={<PanelAvailability />} />
+          <Route path="/public/:slug" element={<PublicPage />} />
         </Routes>
       </main>
     </BrowserRouter>
