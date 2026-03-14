@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Link, useNavigate } from "react-router-dom"
+import { BrowserRouter, Routes, Route, Link, useNavigate, useLocation } from "react-router-dom"
 import "./App.css"
 import { AuthProvider, useAuth } from "./context/AuthContext"
 import Therapists from "./pages/Therapists"
@@ -11,6 +11,8 @@ import PatientEdit from "./pages/PatientEdit"
 import Meets from "./pages/Meets"
 import MeetEdit from "./pages/MeetEdit"
 import MeetBook from "./pages/MeetBook"
+import SolicitarTerapia from "./pages/SolicitarTerapia"
+import SolicitudEnviada from "./pages/SolicitudEnviada"
 import Pays from "./pages/Pays"
 import Pages from "./pages/Pages"
 import PageNew from "./pages/PageNew"
@@ -75,7 +77,18 @@ function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <Nav />
+        <AppLayout />
+      </BrowserRouter>
+    </AuthProvider>
+  )
+}
+
+function AppLayout() {
+  const location = useLocation()
+  const isPublic = ["/", "/meets/book", "/solicitud-enviada"].includes(location.pathname)
+  return (
+    <>
+      {!isPublic && <Nav />}
       <main>
         <Routes>
           <Route path="/" element={<HealthLanding />} />
@@ -88,7 +101,8 @@ function App() {
           <Route path="/patients/:id/edit" element={<PatientEdit />} />
           <Route path="/meets" element={<Meets />} />
           <Route path="/meets/new" element={<MeetBook />} />
-          <Route path="/meets/book" element={<MeetBook />} />
+          <Route path="/meets/book" element={<SolicitarTerapia />} />
+          <Route path="/solicitud-enviada" element={<SolicitudEnviada />} />
           <Route path="/meets/:id/edit" element={<MeetEdit />} />
           <Route path="/pays" element={<Pays />} />
           <Route path="/pages" element={<Pages />} />
@@ -100,8 +114,7 @@ function App() {
           <Route path="/public/:slug" element={<PublicPage />} />
         </Routes>
       </main>
-    </BrowserRouter>
-    </AuthProvider>
+    </>
   )
 }
 

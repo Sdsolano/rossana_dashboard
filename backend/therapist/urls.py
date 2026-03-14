@@ -7,6 +7,7 @@ from .views import (
     TherapistActivateAPIView,
     TherapistDeactivateAPIView,
     TherapistAvailabilityAPIView,
+    GlobalAvailabilityAPIView,
     TherapistFreedaysAPIView,
     AuthLoginAPIView,
     MeAPIView,
@@ -15,6 +16,7 @@ from .views import (
     MeetListAPIView,
     MeetDetailAPIView,
     MeetBookAPIView,
+    MeetSolicitarAPIView,
 )
 
 urlpatterns = [
@@ -24,11 +26,13 @@ urlpatterns = [
     path("therapists/<int:pk>/activate/", TherapistActivateAPIView.as_view()),
     path("therapists/<int:pk>/deactivate/", TherapistDeactivateAPIView.as_view()),
     path("therapists/<int:pk>/availability/", TherapistAvailabilityAPIView.as_view()),
+    path("availability/", GlobalAvailabilityAPIView.as_view()),
     path("therapists/<int:pk>/freedays/", TherapistFreedaysAPIView.as_view()),
     path("therapists/<int:pk>/generate-schedule/", TherapistGenerateScheduleAPIView.as_view()),
     path("meets/", MeetListAPIView.as_view()),
     path("meets/<int:pk>/", MeetDetailAPIView.as_view()),
     path("meets/book/", MeetBookAPIView.as_view()),
+    path("meets/solicitar/", MeetSolicitarAPIView.as_view()),
     path("auth/login/", AuthLoginAPIView.as_view()),
     path("me/", MeAPIView.as_view()),
     path("me/availability/", MeAvailabilityAPIView.as_view()),

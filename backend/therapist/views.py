@@ -5,8 +5,10 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate
+from django.contrib.auth.models import User, Group
 from django.shortcuts import get_object_or_404
 from .models import Therapist, ScheduleConfig, Freeday, Meet
+from .countries import timezone_verbose_to_minutes
 from patient.models import Patient
 from .countries import get_countries_for_api
 from .serializers import (
@@ -151,7 +153,13 @@ class TherapistAvailabilityAPIView(APIView):
         )
         week_day = request.query_params.get("week_day")
         date_str = request.query_params.get("date")
-        tz_minutes = request.query_params.get("tz_minutes", type=int)
+        raw_tz = request.query_params.get("tz_minutes")
+        tz_minutes = None
+        if raw_tz is not None:
+            try:
+                tz_minutes = int(raw_tz)
+            except (TypeError, ValueError):
+                pass
 
         if week_day is not None:
             try:
@@ -456,10 +464,173 @@ class MeetBookAPIView(APIView):
         meet.save()
         return Response(MeetSerializer(meet).data, status=status.HTTP_200_OK)
 
-    def patch(self, request, pk):
-        meet = get_object_or_404(Meet.objects.select_related("therapist", "patient__user"), pk=pk)
-        serializer = MeetUpdateSerializer(meet, data=request.data, partial=True)
-        if not serializer.is_valid():
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        serializer.save()
-        return Response(MeetSerializer(meet).data)
+
+def _slot_labels():
+    """Lista de { id: number, label } según config por defecto."""
+    config = ScheduleConfig.objects.filter(name="default").first()
+    if not config:
+        config = ScheduleConfig.objects.create(name="default", rate=40, interval=5)
+    base = datetime(1990, 1, 1)
+    max_n = config.max_number()
+    return [
+        {"id": i, "label": f"{ (base + config.make_meet_begin(i)).strftime('%H:%M') } a { (base + config.make_meet_end(i)).strftime('%H:%M') }"}
+        for i in range(max_n)
+    ]
+
+
+class GlobalAvailabilityAPIView(APIView):
+    """GET ?date=YYYY-MM-DD [&therapist_id=] [&tz_minutes=] [&timezone_verbose=] — slots disponibles."""
+
+    def get(self, request):
+        date_str = request.query_params.get("date")
+        if not date_str:
+            return Response(
+                {"detail": "Indica date (YYYY-MM-DD)."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        try:
+            day = datetime.strptime(date_str, "%Y-%m-%d").date()
+        except ValueError:
+            return Response({"detail": "date debe ser YYYY-MM-DD."}, status=status.HTTP_400_BAD_REQUEST)
+        raw_therapist_id = request.query_params.get("therapist_id")
+        raw_tz_minutes = request.query_params.get("tz_minutes")
+        therapist_id = None
+        if raw_therapist_id is not None:
+            try:
+                therapist_id = int(raw_therapist_id)
+            except (TypeError, ValueError):
+                pass
+        tz_minutes = None
+        if raw_tz_minutes is not None:
+            try:
+                tz_minutes = int(raw_tz_minutes)
+            except (TypeError, ValueError):
+                pass
+        tz_verbose = (request.query_params.get("timezone_verbose") or "").strip()
+        if tz_verbose and tz_minutes is None:
+            tz_minutes = timezone_verbose_to_minutes(tz_verbose)
+        try:
+            therapists = Therapist.objects.filter(user__is_active=True).select_related("user")
+            if therapist_id is not None:
+                therapists = therapists.filter(pk=therapist_id)
+            labels_by_number = {s["id"]: s["label"] for s in _slot_labels()}
+            slots = []
+            for t in therapists:
+                if t.freeday_set.filter(date=day).exists():
+                    continue
+                try:
+                    if tz_minutes is not None:
+                        avail = t.availible_meets_tz(day, tz_minutes)
+                    else:
+                        avail = t.availible_meets(day)
+                except Exception:
+                    avail = []
+                name = f"{t.user.first_name or ''} {t.user.last_name or ''}".strip() or t.user.username
+                for num in avail:
+                    slots.append({
+                        "therapist_id": t.id,
+                        "therapist_name": name,
+                        "number": num,
+                        "label": labels_by_number.get(num, str(num)),
+                    })
+            slots.sort(key=lambda x: (x["therapist_name"], x["number"]))
+            return Response({"slots": slots})
+        except Exception as e:
+            return Response(
+                {"detail": f"Error al obtener disponibilidad: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+
+def _get_or_create_patient(email, first_name, last_name, telephone, timezone_verbose):
+    """Obtiene paciente por email o crea User + Patient (sin contraseña útil)."""
+    user = User.objects.filter(email=email).first()
+    if user:
+        patient = Patient.objects.filter(user=user).first()
+        if patient:
+            if timezone_verbose:
+                patient.timezone_verbose = timezone_verbose
+                patient.timezone = timezone_verbose_to_minutes(timezone_verbose)
+                patient.save()
+            return patient
+        patient = Patient.objects.create(
+            user=user,
+            telephone=telephone or "",
+            timezone_verbose=timezone_verbose or "UTC",
+        )
+        if timezone_verbose:
+            patient.timezone = timezone_verbose_to_minutes(timezone_verbose)
+            patient.save()
+        return patient
+    base_username = (str(first_name or "")[:1] + str(last_name or "")).lower().replace(" ", "") or email.split("@")[0]
+    username = base_username
+    c = 0
+    while User.objects.filter(username=username).exists():
+        c += 1
+        username = f"{base_username}{c}"
+    user = User.objects.create(
+        username=username,
+        email=email,
+        first_name=first_name or "",
+        last_name=last_name or "",
+        is_active=True,
+    )
+    user.set_unusable_password()
+    user.save()
+    group, _ = Group.objects.get_or_create(name="patient")
+    user.groups.add(group)
+    tz_verbose = timezone_verbose or "UTC"
+    tz_minutes = timezone_verbose_to_minutes(tz_verbose)
+    patient = Patient.objects.create(
+        user=user,
+        telephone=telephone or "",
+        timezone=tz_minutes,
+        timezone_verbose=tz_verbose,
+    )
+    return patient
+
+
+class MeetSolicitarAPIView(APIView):
+    """POST reserva pública: therapist_id, date, number + datos paciente (first_name, last_name, email, telephone)."""
+
+    def post(self, request):
+        therapist_id = request.data.get("therapist_id")
+        date_str = request.data.get("date")
+        number = request.data.get("number")
+        first_name = request.data.get("first_name", "").strip()
+        last_name = request.data.get("last_name", "").strip()
+        email = (request.data.get("email") or "").strip()
+        telephone = (request.data.get("telephone") or "").strip()
+        timezone_verbose = (request.data.get("timezone_verbose") or "").strip() or None
+        if not (therapist_id is not None and date_str and number is not None):
+            return Response(
+                {"detail": "Indica therapist_id, date (YYYY-MM-DD) y number."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        if not email:
+            return Response({"detail": "El email es obligatorio."}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            therapist_id = int(therapist_id)
+            number = int(number)
+        except (TypeError, ValueError):
+            return Response({"detail": "therapist_id y number deben ser enteros."}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            day = datetime.strptime(date_str, "%Y-%m-%d").date()
+        except ValueError:
+            return Response({"detail": "date debe ser YYYY-MM-DD."}, status=status.HTTP_400_BAD_REQUEST)
+        therapist = get_object_or_404(Therapist, pk=therapist_id)
+        patient = _get_or_create_patient(email, first_name, last_name, telephone, timezone_verbose)
+        meet = (
+            Meet.objects.select_for_update()
+            .filter(therapist=therapist, date=day, number=number, status="F")
+            .first()
+        )
+        if not meet:
+            return Response(
+                {"detail": "Ese turno ya no está disponible."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        meet.patient = patient
+        meet.status = "D"
+        meet.save()
+        return Response(MeetSerializer(meet).data, status=status.HTTP_200_OK)
